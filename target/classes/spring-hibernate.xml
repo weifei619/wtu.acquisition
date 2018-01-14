@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="    
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd    
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd    
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd    
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd    
+       ">
+
+	<!-- 自动加载构建bean -->
+	<context:component-scan base-package="com.wtu.acquisition.*" />
+
+	<!-- 加载数据库属性配置文件 -->
+	<context:property-placeholder location="classpath:db.properties" />
+
+	<!-- 数据库连接池c3p0配置 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="jdbcUrl" value="${db.url}"></property>
+		<property name="driverClass" value="${db.driverClassName}"></property>
+		<property name="user" value="${db.username}"></property>
+		<property name="password" value="${db.password}"></property>
+		<property name="maxPoolSize" value="40"></property>
+		<property name="minPoolSize" value="1"></property>
+		<property name="initialPoolSize" value="1"></property>
+		<property name="maxIdleTime" value="20"></property>
+	</bean>
+
+	<!-- session工厂 -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<!-- <prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop> 
+					<prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</prop> 
+					<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop> 
+					<prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop> -->
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hiberante.format_sql">true</prop>
+			</props>
+		</property>
+		<!-- <property name="configLocation" value="classpath:hibernate.cfg.xml"/> -->
+		
+		<!-- 扫描映射文件，实体类 -->
+		<property name="packagesToScan">
+			<list>
+				<!-- 这里，是否可以匹配所有com.test开头，entity 结尾 下所有的实体！？ -->
+				<value>com.wtu.acquisition.entity</value>
+			</list>
+		</property>
+	</bean>
+<!-- 配置模板 -->
+		<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+			<property name="sessionFactory" ref="sessionFactory" />
+		</bean>
+		<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+			<property name="dataSource" ref="dataSource" />
+		</bean>
+	<!-- <bean id="persistenceDelegate" class="com.test.core.base.DefaultPersistenceDelegate"> 
+		<property name="sessionFactory" ref="sessionFactory"></property> </bean> 
+		<bean id="queryDelegate" class="com.test.core.base.DefaultQueryDelegate"> 
+		<property name="sessionFactory" ref="sessionFactory"></property> </bean> -->
+	<!-- 开启AOP监听 只对当前配置文件有效 -->
+	<aop:aspectj-autoproxy expose-proxy="true" />
+
+	<!-- 开启注解事务 只对当前配置文件有效 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- 配置事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<!--  <property name="dataSource" ref="dataSource" />-->
+	</bean>
+
+	<!-- 配置事务通知属性 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<!-- 定义事务传播属性 -->
+		<tx:attributes>
+			<!--hibernate4必须配置为开启事务 否则 getCurrentSession()获取不到 -->
+			<tx:method name="list*" propagation="REQUIRED" />
+			<tx:method name="del*" propagation="REQUIRED" />
+			<tx:method name="do*" propagation="REQUIRED" />
+			<tx:method name="megor*" propagation="REQUIRED" />
+			<tx:method name="modify*" propagation="REQUIRED" />
+			<tx:method name="execute*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="edit*" propagation="REQUIRED" />
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="new*" propagation="REQUIRED" />
+			<tx:method name="set*" propagation="REQUIRED" />
+			<tx:method name="remove*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="change*" propagation="REQUIRED" />
+			<tx:method name="get*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="find*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="load*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="*" propagation="REQUIRED" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 配置事务切面 -->
+		<!-- 定义AOP配置 -->
+	<aop:config>
+		<!-- 定义一个切入点 -->
+		<aop:pointcut expression="execution (* com.wtu.acquisition.dao.*.*(..))"
+			id="allDaoMethod" />
+		<!-- 对切入点和事务的通知，进行适配 -->
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="allDaoMethod" />
+	</aop:config>
+	<!-- 事务切面配置 -->
+	<aop:config>
+		<!-- 定义一个切入点 -->
+		<aop:pointcut expression="execution (* com.wtu.acquisition.biz.impl.*.*(..))"
+			id="productServiceMethods" />
+		<!-- 对切入点和事务的通知，进行适配 -->
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="productServiceMethods" />
+	</aop:config>
+</beans>    
