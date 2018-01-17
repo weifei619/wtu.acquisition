@@ -9,7 +9,6 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.logging.log4j.core.Logger;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 
 public class SysConfig {
@@ -39,7 +38,7 @@ public class SysConfig {
 
 	// 获取索引配置
 	public static String getIndexConfig(String key, String property) {
-		return SysConfig.indexconfig.get(key + "." + property);
+		return SysConfig.sysconfig.get(key + "." + property);
 
 	}
 
@@ -52,7 +51,7 @@ public class SysConfig {
 			for (Entry  enty : ps.entrySet()) {
 				String key = enty.getKey().toString();
 				String value=enty.getValue().toString();
-				value=new String(value.getBytes("utf-8"));
+				value=new String(value.getBytes("ISO-8859-1"),"utf-8");
 				map.put(key, value);
 			}
 		} catch (IOException e) {
