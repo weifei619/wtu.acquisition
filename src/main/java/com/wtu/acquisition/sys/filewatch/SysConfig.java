@@ -10,6 +10,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.slf4j.Logger;
 
 public class SysConfig {
 	private static Log log = LogFactory.getLog(SysConfig.class);

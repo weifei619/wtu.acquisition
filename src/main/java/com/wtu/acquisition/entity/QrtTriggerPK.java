@@ -4,33 +4,48 @@ public class QrtTriggerPK {
 	private String SCHD_NAME;
 	private String TRIGGER_NAME;
 	private String TRUGGER_GROUP;
- /**
-  * 表QRTI——CORON_TRIGGER的主键类，可用其他的相同的复合主键表
-  */
+
+	/**
+	 * 表QRTI——CORON_TRIGGER的主键类，可用其他的相同的复合主键表
+	 */
 	public int hashCode() {
-		final int prime=31;
-		int result=1;
-		result=prime*result+(SCHD_NAME==null?0:SCHD_NAME.hashCode());
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (SCHD_NAME == null ? 0 : SCHD_NAME.hashCode());
+		result = prime * result + (TRIGGER_NAME == null ? 0 : TRIGGER_NAME.hashCode());
+		result = prime * result + (TRUGGER_GROUP == null ? 0 : TRUGGER_GROUP.hashCode());
 		return result;
 	}
+
 	public boolean equals(Object obj) {
-		if(this==obj)
+		if (this == obj)
 			return true;
-		if(obj==null)
+		if (obj == null)
 			return false;
-		if(getClass()!=obj.getClass())
+		if (getClass() != obj.getClass())
 			return false;
 		QrtTriggerPK other = (QrtTriggerPK) obj;
-		if(SCHD_NAME==null) {
-			if(other.SCHD_NAME!=null)
+		if (SCHD_NAME == null) {
+			if (other.SCHD_NAME != null)
 				return false;
+		} else if (!SCHD_NAME.equals(other.SCHD_NAME)) {
+			return false;
 		}
-		else if(!SCHD_NAME.equals(other.SCHD_NAME)) {
+		if (TRIGGER_NAME == null) {
+			if (other.TRIGGER_NAME != null)
+				return false;
+		} else if (!TRIGGER_NAME.equals(other.TRIGGER_NAME)) {
+			return false;
+		}
+		if (TRUGGER_GROUP == null) {
+			if (other.TRUGGER_GROUP != null)
+				return false;
+		} else if (!TRUGGER_GROUP.equals(other.TRUGGER_GROUP)) {
 			return false;
 		}
 		return true;
-			
 	}
+
 	public String getSCHD_NAME() {
 		return SCHD_NAME;
 	}
