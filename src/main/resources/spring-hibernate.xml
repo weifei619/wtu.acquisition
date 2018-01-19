@@ -18,21 +18,21 @@
 	<context:property-placeholder location="classpath:db.properties" />
 
 	<!-- 数据库连接池c3p0配置 -->
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
 		destroy-method="close">
-		<property name="jdbcUrl" value="${db.url}"></property>
-		<property name="driverClass" value="${db.driverClassName}"></property>
-		<property name="user" value="${db.username}"></property>
+		<property name="url" value="${db.url}"></property>
+		<property name="driverClassName" value="${db.driverClassName}"></property>
+		<property name="username" value="${db.username}"></property>
 		<property name="password" value="${db.password}"></property>
-		<property name="maxPoolSize" value="40"></property>
-		<property name="minPoolSize" value="1"></property>
-		<property name="initialPoolSize" value="1"></property>
-		<property name="maxIdleTime" value="20"></property>
+		<property name="maxActive" value="40"></property>
+		<property name="minIdle" value="1"></property>
+		<property name="initialSize" value="1"></property>
+		<property name="maxWait" value="6000"></property>
 	</bean>
 
 	<!-- session工厂 -->
-	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+	<!--  org.springframework.orm.hibernate3.LocalSessionFactoryBean 本地可以用这个,比如hibernate.cfg.xml-->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource">
 			<ref bean="dataSource" />
 		</property>
@@ -79,7 +79,7 @@
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
-		<!-- <property name="dataSource" ref="dataSource" /> -->
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- 配置事务通知属性 -->
@@ -106,7 +106,7 @@
 			<tx:method name="get*" propagation="REQUIRED" read-only="true" />
 			<tx:method name="find*" propagation="REQUIRED" read-only="true" />
 			<tx:method name="load*" propagation="REQUIRED" read-only="true" />
-			<tx:method name="*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="*" propagation="REQUIRED" read-only="false" />
 		</tx:attributes>
 	</tx:advice>
 

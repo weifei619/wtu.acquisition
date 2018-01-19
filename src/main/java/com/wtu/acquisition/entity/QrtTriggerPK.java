@@ -1,6 +1,8 @@
 package com.wtu.acquisition.entity;
 
-public class QrtTriggerPK {
+import java.io.Serializable;
+
+public class QrtTriggerPK implements Serializable{
 	private String SCHD_NAME;
 	private String TRIGGER_NAME;
 	private String TRUGGER_GROUP;
