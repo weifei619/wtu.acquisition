@@ -1,5 +1,6 @@
 package com.wtu.acquisition.quartz.init;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -8,7 +9,7 @@ import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
-public class myDetailQuartzJobBean extends QuartzJobBean {
+public class myDetailQuartzJobBean extends QuartzJobBean implements Serializable{
 	private String targetObject;
 	private String targeMethod;
 	private ApplicationContext ctx;

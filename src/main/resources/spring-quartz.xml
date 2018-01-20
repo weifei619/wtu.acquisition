@@ -10,6 +10,7 @@
 		init-method="init" destroy-method="destory"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<!-- 延时启动，应用启动完 -->
+		
 		<property name="startupDelay" value="10" />
 		<property name="autoStartup" value="true" />
 		<property name="triggers">
@@ -17,6 +18,9 @@
 				<!-- <ref bean="simpleTrigger"/> -->
 				<ref bean="Trigger_name" />
 			</list>
+		</property>
+		<property name="dataSource">
+			<ref bean="dataSource" />
 		</property>
 		<!-- quartz配置路径 -->
 		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
@@ -28,7 +32,7 @@
 		<!-- 指定Tirgger绑定的Job -->
 		<property name="jobDetail" ref="job_name" />
 		<!-- 指定Cron 的表达式 ，当前是每隔1s运行一次 -->
-		<property name="cronExpression" value="0/1 * * * * ?" />
+		<property name="cronExpression" value="0 59 23 * * ?" />
 	</bean>
 	<!-- 执行任务类和方法 -->
 	<bean id="job_name"
@@ -41,7 +45,7 @@
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="targetObject" value="process"></entry>
-				<entry key="targetMethod" value="ducc"></entry>
+				<entry key="targetMethod" value="processAll"></entry>
 			</map>
 		</property>
 	</bean>
