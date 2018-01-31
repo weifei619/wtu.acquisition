@@ -6,25 +6,25 @@
    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
    ">
 
-	<bean id="mapScheduler" lazy-init="false" autowire="no"
-		init-method="init" destroy-method="destory"
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	<bean id="mapScheduler" lazy-init="false" autowire="no" init-method="init" destroy-method="destory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<!-- 延时启动，应用启动完 -->
 		
+		<!-- quartz配置路径 -->
+		<property name="applicationContextSchedulerContextKey" value="applicationContextKey" />
+		<property name="configLocation" value="classpath:quartz.properties" />
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
 		<property name="startupDelay" value="10" />
 		<property name="autoStartup" value="true" />
 		<property name="triggers">
 			<list>
 				<!-- <ref bean="simpleTrigger"/> -->
 				<ref bean="Trigger_name" />
+				<ref bean="Trigger_statck"></ref>
 			</list>
 		</property>
-		<property name="dataSource">
-			<ref bean="dataSource" />
-		</property>
-		<!-- quartz配置路径 -->
-		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
-		<property name="configLocation" value="classpath:quartz.properties" />
 	</bean>
 	<!-- 触发器 -->
 	<bean id="Trigger_name"
@@ -34,8 +34,29 @@
 		<!-- 指定Cron 的表达式 ，当前是每隔1s运行一次 -->
 		<property name="cronExpression" value="0 59 23 * * ?" />
 	</bean>
+		<bean id="Trigger_statck"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<!-- 指定Tirgger绑定的Job -->
+		<property name="jobDetail" ref="job_statck" />
+		<!-- 指定Cron 的表达式 ，当前是每隔1s运行一次 -->
+		<property name="cronExpression" value="0 59 23 * * ?" />
+	</bean>
 	<!-- 执行任务类和方法 -->
 	<bean id="job_name"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<!-- 必须设置为true，如果为false，当没有活动的触发器与之关联时会在调度器中会删除该任务 -->
+		<property name="durability" value="true" />
+		<property name="jobClass">
+			<value>com.wtu.acquisition.quartz.init.myDetailQuartzJobBean</value>
+		</property>
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="targetObject" value="process"></entry>
+				<entry key="targetMethod" value="processAll"></entry>
+			</map>
+		</property>
+	</bean>
+	<bean id="job_statck"
 		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<!-- 必须设置为true，如果为false，当没有活动的触发器与之关联时会在调度器中会删除该任务 -->
 		<property name="durability" value="true" />
