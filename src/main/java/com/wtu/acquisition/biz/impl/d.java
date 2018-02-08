@@ -1,5 +1,8 @@
 package com.wtu.acquisition.biz.impl;
 
-public class d {
+import org.springframework.stereotype.Service;
 
+@Service
+public class d {
+  
 }
