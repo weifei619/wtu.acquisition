@@ -9,9 +9,7 @@ import org.slf4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
-
 import kafka.producer.ProducerConfig;
-
 
 public class ProducerConfigUtil {
 	 private Logger log = (Logger) Log.getLogger(ProducerConfigUtil.class);
