@@ -12,8 +12,8 @@ import com.wtu.acquisition.solr.IndexDocVO;
 import com.wtu.acquisition.sys.filewatch.SysConfig;
 import com.wtu.acquisition.util.Util;
 
+import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
-import kafka.producer.Producer;
 
 public final class Myproducer {
 	private static Log log = (Log) LoggerFactory.getLogger(Myproducer.class);
@@ -40,7 +40,6 @@ public final class Myproducer {
 		out.writeObject(vo);
 		bt=obj.toByteArray();
 		KeyedMessage<String,byte[]> d =new KeyedMessage<String,byte[]>(KAFA_TOPIC,bt);
-//		p.send(d);
-//		p.send(d);
+		p.send(d);
 	}
 }
