@@ -108,59 +108,52 @@ public class Util {
 		if (content == null || content.isEmpty()) {
 			return;
 		}
-		if (Util.isStringMorethan1M(content))
-		{
-			//压缩
-	         // 创建一个新的 byte 数组输出流  
-	         ByteArrayOutputStream out = new ByteArrayOutputStream();  
-	         // 使用默认缓冲区大小创建新的输出流  
-	         GZIPOutputStream gzip = new GZIPOutputStream(out);  
-	         // 将 b.length 个字节写入此输出流  
-	         gzip.write(origcontent.getBytes());  
-	         // 使用指定的 charsetName，通过解码字节将缓冲区内容转换为字符串  
-	         out.toString("ISO-8859-1");  
-	         gzip.close();  
+		if (Util.isStringMorethan1M(content)) {
+			// 压缩
+			// 创建一个新的 byte 数组输出流
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			// 使用默认缓冲区大小创建新的输出流
+			GZIPOutputStream gzip = new GZIPOutputStream(out);
+			// 将 b.length 个字节写入此输出流
+			gzip.write(origcontent.getBytes());
+			// 使用指定的 charsetName，通过解码字节将缓冲区内容转换为字符串
+			out.toString("ISO-8859-1");
+			gzip.close();
 		}
 	}
-	public static String FileUpload(String url,File file,String key) throws Exception, IOException
-	{
-		String body="{}";
-		if(url==null||url.equals(""))
-		{
+
+	public static String FileUpload(String url, File file, String key) throws Exception, IOException {
+		String body = "{}";
+		if (url == null || url.equals("")) {
 			return "参数不存在";
 		}
-		if(!file.exists())
-		{
+		if (!file.exists()) {
 			return "上传的文件名不存在";
 		}
-		PostMethod postMethod=new PostMethod();
-		//Filepart 用来上传文件的类
-		FilePart fp=new FilePart("file",file.getName(),file);
+		PostMethod postMethod = new PostMethod();
+		// Filepart 用来上传文件的类
+		FilePart fp = new FilePart("file", file.getName(), file);
 		fp.setCharSet("utf-8");
-		Part[] parts= {fp,new StringPart("key",key,"utf-8"),new StringPart("name",file.getName(),"utf-8")};
-		MultipartRequestEntity mre =new MultipartRequestEntity(parts,postMethod.getParams());
+		Part[] parts = { fp, new StringPart("key", key, "utf-8"), new StringPart("name", file.getName(), "utf-8") };
+		MultipartRequestEntity mre = new MultipartRequestEntity(parts, postMethod.getParams());
 		postMethod.setRequestEntity(mre);
-		
-		HttpClient client =new HttpClient();
-		//由于上传文件可能比较大，会超时
+
+		HttpClient client = new HttpClient();
+		// 由于上传文件可能比较大，会超时
 		client.getHttpConnectionManager().getParams().setConnectionTimeout(3000);
-		
-		int status=client.executeMethod(postMethod);
-		if(status==HttpStatus.OK_200)
-		{
-			InputStream input=postMethod.getResponseBodyAsStream();
-			BufferedReader bf=new BufferedReader(new InputStreamReader(input));
-			StringBuffer sb=new StringBuffer();
-			String str="";
-			while((str=bf.readLine())!=null)
-			{
+
+		int status = client.executeMethod(postMethod);
+		if (status == HttpStatus.OK_200) {
+			InputStream input = postMethod.getResponseBodyAsStream();
+			BufferedReader bf = new BufferedReader(new InputStreamReader(input));
+			StringBuffer sb = new StringBuffer();
+			String str = "";
+			while ((str = bf.readLine()) != null) {
 				sb.append(str);
 			}
-			body=sb.toString();
-		}
-		else 
-		{
-			body="fail";
+			body = sb.toString();
+		} else {
+			body = "fail";
 		}
 		return body;
 	}

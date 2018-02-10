@@ -3,15 +3,16 @@ package com.wtu.acquisition.kafkaUtil;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.eclipse.jetty.util.log.Log;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
+
 import kafka.producer.ProducerConfig;
 
 public class ProducerConfigUtil {
-	private Logger log = (Logger) Log.getLogger(ProducerConfigUtil.class);
+	private static Logger log = LoggerFactory.getLogger(ProducerConfigUtil.class);
 	private static ProducerConfig instance = null;
 	private static Properties props = null;
 
@@ -29,7 +30,7 @@ public class ProducerConfigUtil {
 		try {
 			prop = PropertiesLoaderUtils.loadProperties(resource);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("kafka初始化错误:"+e.getMessage());
 		}
 		props = new Properties();
 		// 设置kafka服务器的列表，kafka集群包含多个服务器，这里制定一个服务器的子集
